@@ -1,8 +1,37 @@
 import numpy as np
 
-# path = "D:/Seafile/H_gTo/"
+
 filename = input("请输入fchk文件名:")
+gjffilename = input("请输入gjf文件名:")
+
 N = 0
+C = '12.01100'
+H = '1.00800'
+n = '14.00700'
+O = '15.99900'
+S = '32.06640'
+F = '18.99840'
+Cl = '35.45300'
+Br = '79.90410'
+I = '126.90450'
+P = '30.97380'
+bohrTA = 0.529177249
+
+def ReadAtom():
+    flag = 2
+    list =[]
+    fg = open(gjffilename, 'r', encoding='utf8')
+    for line in fg:
+        if line == '\n':
+            flag = flag - 1
+        if flag == 0:
+            line_save = line.rstrip('\n').split(' ')
+            list = list + line_save
+    while '' in list:
+        list.remove('')
+    del list[0:2]
+    fg.close()
+    return list
 
 
 def ReadHess():
@@ -59,7 +88,7 @@ def PrintHess():
         for j in range(0, 5):
             column = int(i / Hess.shape[0]) * 5 + j
             if sum == Hess.shape[0]*Hess.shape[0]:
-                return
+                break
             if j == 0:
                 fb.write((4 - len(str(i % Hess.shape[0]))) * ' ' + str(i % Hess.shape[0]) + 5 * ' ')
             if column < Hess.shape[0]:
@@ -71,6 +100,54 @@ def PrintHess():
                 fb.write('  ')
                 sum = sum + 1
             if j == 4:
+                fb.write('\n')
+    atoms = ReadAtom()
+    Natoms = int(len(atoms)/4)
+    SumAtoms = 0
+    fb.write('\n\n')
+    fb.write('$atoms\n')
+    fb.write(str(Natoms)+'\n')
+    for i in range(0, Natoms):
+        for j in range(0, 4):
+            if j == 0:
+                fb.write(atoms[SumAtoms])
+                fb.write('    ')
+                if atoms[SumAtoms] == 'C':
+                    fb.write(C)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'H':
+                    fb.write(H)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'O':
+                    fb.write(O)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'N':
+                    fb.write(n)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'P':
+                    fb.write(P)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'S':
+                    fb.write(S)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'F':
+                    fb.write(F)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'Cl':
+                    fb.write(Cl)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'Br':
+                    fb.write(Br)
+                    fb.write('    ')
+                if atoms[SumAtoms] == 'I':
+                    fb.write(I)
+                    fb.write('    ')
+                SumAtoms = SumAtoms + 1
+            else:
+                fb.write(str(float(atoms[SumAtoms])/bohrTA))
+                fb.write('    ')
+                SumAtoms = SumAtoms + 1
+            if j == 3:
                 fb.write('\n')
     fb.close()
 
